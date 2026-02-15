@@ -3,62 +3,59 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Drone</title>
+<title>Drone?</title>
 
 <style>
-  body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f0f0f0;
+  body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#f0f0f0;
   }
 
-  .container {
-    display: flex;
-    height: 100vh;
+  .container{
+    display:flex;
+    height:100vh;
   }
 
-  .column {
-    flex: 1;
-    padding: 15px;
-    box-sizing: border-box;
-    border: 2px dashed #ccc;
-    overflow-y: auto;
+  .column{
+    flex:1;
+    padding:15px;
+    box-sizing:border-box;
+    border:2px dashed #ccc;
+    overflow-y:auto;
   }
 
-  #left {
-    background: #ffffff;
+  #left{ background:#fff; }
+
+  #right{
+    background:#fafafa;
+    position:relative;
   }
 
-  #right {
-    background: #fafafa;
+  #right::before{
+    content:"тест";
+    position:absolute;
+    inset:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:48px;
+    color:rgba(0,0,0,0.1);
+    pointer-events:none;
   }
 
- 
-  #right::before {
-    content: "тест";
-    position: absolute;
-    inset: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 48px;
-    color: rgba(0,0,0,0.1);
-    pointer-events: none;
+  .block{
+    padding:15px;
+    margin-bottom:10px;
+    background:#4CAF50;
+    color:white;
+    border-radius:8px;
+    cursor:grab;
+    user-select:none;
   }
 
-  .block {
-    padding: 15px;
-    margin-bottom: 10px;
-    background: #4CAF50;
-    color: white;
-    border-radius: 8px;
-    cursor: grab;
-    user-select: none;
-    touch-action: none;
-  }
-
-  .dragging {
-    opacity: 0.5;
+  .dragging{
+    opacity:0.5;
   }
 </style>
 </head>
@@ -76,30 +73,51 @@
 </div>
 
 <script>
-  const blocks = document.querySelectorAll(".block");
-  const columns = document.querySelectorAll(".column");
-  let dragged = null;
+const left = document.getElementById("left");
+const right = document.getElementById("right");
 
-  blocks.forEach(block => {
-    block.addEventListener("dragstart", () => {
-      dragged = block;
-      block.classList.add("dragging");
-    });
+let dragged = null;
+let fromPalette = false;
 
-    block.addEventListener("dragend", () => {
-      block.classList.remove("dragging");
-    });
+function makeDraggable(block){
+  block.addEventListener("dragstart", () => {
+    dragged = block;
+    fromPalette = block.parentElement === left;
+    block.classList.add("dragging");
   });
 
-  columns.forEach(col => {
-    col.addEventListener("dragover", e => {
-      e.preventDefault(); 
-    });
-
-    col.addEventListener("drop", () => {
-      if (dragged) col.appendChild(dragged);
-    });
+  block.addEventListener("dragend", () => {
+    block.classList.remove("dragging");
   });
+}
+
+document.querySelectorAll(".block").forEach(makeDraggable);
+
+[left, right].forEach(col=>{
+  col.addEventListener("dragover", e=> e.preventDefault());
+});
+
+right.addEventListener("drop", ()=>{
+  if(!dragged) return;
+
+  if(fromPalette){
+    const block = dragged.cloneNode(true);
+    block.classList.remove("dragging");
+    block.style.opacity = "1";
+    makeDraggable(block);
+    right.appendChild(block);
+  } else {
+    right.appendChild(dragged);
+  }
+});
+
+left.addEventListener("drop", ()=>{
+  if(!dragged) return;
+
+  if(!fromPalette){
+    dragged.remove();
+  }
+});
 </script>
 
 </body>
