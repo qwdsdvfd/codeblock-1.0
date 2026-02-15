@@ -1,1 +1,106 @@
-1
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Drone</title>
+
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f0f0f0;
+  }
+
+  .container {
+    display: flex;
+    height: 100vh;
+  }
+
+  .column {
+    flex: 1;
+    padding: 15px;
+    box-sizing: border-box;
+    border: 2px dashed #ccc;
+    overflow-y: auto;
+  }
+
+  #left {
+    background: #ffffff;
+  }
+
+  #right {
+    background: #fafafa;
+  }
+
+ 
+  #right::before {
+    content: "тест";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 48px;
+    color: rgba(0,0,0,0.1);
+    pointer-events: none;
+  }
+
+  .block {
+    padding: 15px;
+    margin-bottom: 10px;
+    background: #4CAF50;
+    color: white;
+    border-radius: 8px;
+    cursor: grab;
+    user-select: none;
+    touch-action: none;
+  }
+
+  .dragging {
+    opacity: 0.5;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <div id="left" class="column">
+    <div class="block" draggable="true">А1</div>
+    <div class="block" draggable="true">Б2</div>
+    <div class="block" draggable="true">В3</div>
+  </div>
+
+  <div id="right" class="column"></div>
+</div>
+
+<script>
+  const blocks = document.querySelectorAll(".block");
+  const columns = document.querySelectorAll(".column");
+  let dragged = null;
+
+  blocks.forEach(block => {
+    block.addEventListener("dragstart", () => {
+      dragged = block;
+      block.classList.add("dragging");
+    });
+
+    block.addEventListener("dragend", () => {
+      block.classList.remove("dragging");
+    });
+  });
+
+  columns.forEach(col => {
+    col.addEventListener("dragover", e => {
+      e.preventDefault(); 
+    });
+
+    col.addEventListener("drop", () => {
+      if (dragged) col.appendChild(dragged);
+    });
+  });
+</script>
+
+</body>
+</html>
