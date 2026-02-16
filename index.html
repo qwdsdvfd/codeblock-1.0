@@ -40,12 +40,12 @@
     justify-content:center;
     align-items:center;
     font-size:48px;
-    color:rgba(0,0,0,0.1);
+    color:rgba(0,0,0,0.08);
     pointer-events:none;
   }
 
   .block{
-    padding:15px;
+    padding:14px;
     margin-bottom:10px;
     background:#4CAF50;
     color:white;
@@ -55,7 +55,17 @@
   }
 
   .dragging{
-    opacity:0.5;
+    opacity:0.4;
+  }
+
+  .anchor{
+    background:#2196F3;
+    cursor:default;
+  }
+
+  .stack{
+    margin-top:10px;
+    min-height:20px;
   }
 </style>
 </head>
@@ -63,18 +73,27 @@
 <body>
 
 <div class="container">
+
   <div id="left" class="column">
     <div class="block" draggable="true">А1</div>
     <div class="block" draggable="true">Б2</div>
     <div class="block" draggable="true">В3</div>
   </div>
 
-  <div id="right" class="column"></div>
+  <div id="right" class="column">
+    <div id="anchor" class="block anchor">
+      Х0
+      <div id="stack" class="stack"></div>
+    </div>
+  </div>
+
 </div>
 
 <script>
 const left = document.getElementById("left");
 const right = document.getElementById("right");
+const anchor = document.getElementById("anchor");
+const stack = document.getElementById("stack");
 
 let dragged = null;
 let fromPalette = false;
@@ -91,30 +110,47 @@ function makeDraggable(block){
   });
 }
 
-document.querySelectorAll(".block").forEach(makeDraggable);
+document.querySelectorAll("#left .block").forEach(makeDraggable);
 
-[left, right].forEach(col=>{
-  col.addEventListener("dragover", e=> e.preventDefault());
-});
+anchor.addEventListener("dragover", e => e.preventDefault());
 
-right.addEventListener("drop", ()=>{
+anchor.addEventListener("drop", e => {
+  e.preventDefault();
+  e.stopPropagation();
+
   if(!dragged) return;
+
+  const block = fromPalette ? dragged.cloneNode(true) : dragged;
 
   if(fromPalette){
-    const block = dragged.cloneNode(true);
-    block.classList.remove("dragging");
-    block.style.opacity = "1";
     makeDraggable(block);
-    right.appendChild(block);
-  } else {
-    right.appendChild(dragged);
   }
+
+  block.classList.remove("dragging");
+  stack.appendChild(block);
 });
 
-left.addEventListener("drop", ()=>{
+right.addEventListener("dragover", e => e.preventDefault());
+
+right.addEventListener("drop", e => {
+  e.preventDefault();
+
   if(!dragged) return;
 
-  if(!fromPalette){
+  const block = fromPalette ? dragged.cloneNode(true) : dragged;
+
+  if(fromPalette){
+    makeDraggable(block);
+  }
+
+  block.classList.remove("dragging");
+  right.appendChild(block);
+});
+
+left.addEventListener("dragover", e => e.preventDefault());
+
+left.addEventListener("drop", () => {
+  if(dragged && !fromPalette){
     dragged.remove();
   }
 });
