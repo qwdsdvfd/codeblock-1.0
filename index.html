@@ -6,61 +6,109 @@
 <title>CodeBlock</title>
 
 <style>
+{
+  box-sizing:border-box;
+}
+
 body{
   margin:0;
-  font-family:Arial;
-  background:#f0f0f0;
+  font-family:'Segoe UI', Arial, sans-serif;
+  background:linear-gradient(135deg,#1e1e2f,#252540);
+  color:white;
 }
 
 .container{
   display:flex;
   height:100vh;
+  gap:15px;
+  padding:15px;
 }
 
 .column{
   flex:1;
-  padding:15px;
-  box-sizing:border-box;
-  border:2px dashed #ccc;
+  padding:20px;
+  border-radius:16px;
   overflow-y:auto;
+  backdrop-filter:blur(10px);
 }
 
-#left{ background:#fff; }
-#right{ background:#fafafa; }
+#left{
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.08);
+}
+
+#right{
+  background:rgba(255,255,255,0.08);
+  border:2px dashed rgba(255,255,255,0.2);
+}
 
 .block{
-  padding:14px;
-  margin-bottom:10px;
-  background:#4CAF50;
-  color:white;
-  border-radius:8px;
+  padding:14px 16px;
+  margin-bottom:12px;
+  border-radius:14px;
   cursor:grab;
   user-select:none;
+  font-weight:600;
+  letter-spacing:0.5px;
+  transition:0.2s ease;
+  box-shadow:0 4px 12px rgba(0,0,0,0.3);
 }
 
-.anchor{ background:#9C27B0; }
-.anchor-H0{ background:#2196F3; }
-
-.stack{
-  margin-top:10px;
-  min-height:20px;
+.block:hover{
+  transform:translateY(-3px);
+  box-shadow:0 8px 18px rgba(0,0,0,0.4);
 }
 
 .dragging{
   opacity:0.4;
+  transform:scale(0.95);
+}
+
+.block:not(.anchor):not(.text-block){
+  background:linear-gradient(135deg,#4CAF50,#43A047);
+}
+
+.anchor{
+  background:linear-gradient(135deg,#9C27B0,#7B1FA2);
+}
+
+.anchor-H0{
+  background:linear-gradient(135deg,#2196F3,#1565C0);
+}
+
+.stack{
+  margin-top:10px;
+  padding-left:10px;
+  border-left:3px solid rgba(255,255,255,0.3);
+  min-height:20px;
 }
 
 .text-block{
-  background:#FF9800;
+  background:linear-gradient(135deg,#FF9800,#F57C00);
+  display:flex;
+  align-items:center;
+  gap:8px;
 }
 
 .text-input{
-  margin-left:8px;
-  padding:4px 6px;
-  border-radius:4px;
+  padding:6px 8px;
+  border-radius:8px;
   border:none;
   outline:none;
   font-size:14px;
+  background:rgba(255,255,255,0.15);
+  color:white;
+  width:90px;
+  transition:0.2s;
+}
+
+.text-input::placeholder{
+  color:rgba(255,255,255,0.6);
+}
+
+.text-input:focus{
+  background:rgba(255,255,255,0.25);
+  width:120px;
 }
 </style>
 </head>
